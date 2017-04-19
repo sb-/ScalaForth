@@ -71,7 +71,7 @@ class ForthInterpreter(prog: List[String]) {
             case "sub" => {
                 val x = stack.pop
                 val y = stack.pop
-                stack.push(x - y)
+                stack.push(y - x)
             }
             case "mul" => {
                 val x = stack.pop
@@ -81,7 +81,7 @@ class ForthInterpreter(prog: List[String]) {
             case "div" => {
                 val x = stack.pop
                 val y = stack.pop
-                stack.push(x / y)
+                stack.push(y / x)
             }
             case "mod" => {
                 val x = stack.pop
@@ -178,7 +178,7 @@ class ForthInterpreter(prog: List[String]) {
             case "until" => {
                 val x = stack.pop
                 val (condtype, condval) = conditional_stack.pop
-                if (x == 0) {
+                if (x != 0) {
                     conditional_stack.push((condtype, condval))
                     return condval
                 }
@@ -227,22 +227,22 @@ class ForthInterpreter(prog: List[String]) {
                 stack.push(r.nextInt(stack.pop))
             }
             case _ => {
-                functions.get(token) match {
-                    case Some(newpc) => {
-                        conditional_stack.push(("funccall", pc + 1))
-                        return newpc
-                    }
+                val funcdef = functions.get(token)
+                if (funcdef.isDefined) {
+                    conditional_stack.push(("funccall", pc + 1))
+                    return funcdef.get
                 }
-                constants.get(token) match {
-                    case Some(value) => {
-                        stack = stack.push(value)
-                        return pc + 1
-                    }
+
+                val const = constants.get(token)
+                if (const.isDefined) {
+                    stack.push(const.get)
+                    return pc + 1
                 }
-                variables_to_addr.get(token) match {
-                    case Some(addr) => {
-                        stack = stack.push(addr)
-                    }
+
+                val varaddr = variables_to_addr.get(token)
+                if (varaddr.isDefined) {
+                    stack.push(varaddr.get)
+                    return pc + 1
                 }
             }
         }
