@@ -42,46 +42,51 @@ class ForthInterpreter(prog: List[String]) {
             case "drop" => stack.pop
             case "over" => {
                 val x = stack.pop
-                val y = stack.pop
-                stack = stack.push(y)
+                val y = stack.top
                 stack = stack.push(x)
                 stack = stack.push(y)
             }
             case "dot" => print(stack.pop)
             case "emit" => print(stack.pop.toChar)
             case "cr" => println("")
+            case "swap" => {
+                val x = stack.pop
+                val y = stack.pop
+                stack.push(x)
+                stack.push(y)
+            }
             case "rot" => {
                 val x = stack.pop
                 val y = stack.pop
                 val z = stack.pop
-                stack = stack.push(y)
-                stack = stack.push(z)
-                stack = stack.push(x)
+                stack.push(y)
+                stack.push(x)
+                stack.push(z)
             }
             case "add" => {
                 val x = stack.pop
                 val y = stack.pop
-                stack = stack.push(x + y)
+                stack.push(x + y)
             }
             case "sub" => {
                 val x = stack.pop
                 val y = stack.pop
-                stack = stack.push(x - y)
+                stack.push(x - y)
             }
             case "mul" => {
                 val x = stack.pop
                 val y = stack.pop
-                stack = stack.push(x * y)
+                stack.push(x * y)
             }
             case "div" => {
                 val x = stack.pop
                 val y = stack.pop
-                stack = stack.push(x / y)
+                stack.push(x / y)
             }
             case "mod" => {
                 val x = stack.pop
                 val y = stack.pop
-                stack = stack.push(y % x)
+                stack.push(y % x)
             }
             case "lt" => {
                 val x = stack.pop
@@ -123,7 +128,7 @@ class ForthInterpreter(prog: List[String]) {
             }
             case "iff" => {
                 val x = stack.pop
-                conditional_stack = conditional_stack.push(("iff", x))
+                conditional_stack.push(("iff", x))
             }
             case "elsef" => {
                 val (condtype, condval) = conditional_stack.top
@@ -153,8 +158,8 @@ class ForthInterpreter(prog: List[String]) {
                 val start = stack.pop
                 val end = stack.pop
                 // TODO: look into named tuples or something similar
-                do_loop_stack = do_loop_stack.push((start, end))
-                conditional_stack = conditional_stack.push(("DO", pc + 1))
+                do_loop_stack.push((start, end))
+                conditional_stack.push(("DO", pc + 1))
             }
             case "i" => {
                 val (loop_count, end) = do_loop_stack.top
