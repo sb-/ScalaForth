@@ -91,12 +91,12 @@ class ForthInterpreter(prog: List[String]) {
             case "lt" => {
                 val x = stack.pop
                 val y = stack.pop
-                stack.push(x < y)
+                stack.push(y < x)
             }
             case "gt" => {
                 val x = stack.pop
                 val y = stack.pop
-                stack.push(x > y)
+                stack.push(y > x)
             }
             case "eql" => {
                 val x = stack.pop
@@ -107,7 +107,7 @@ class ForthInterpreter(prog: List[String]) {
             case "and" => {
                 val x = stack.pop
                 val y = stack.pop
-                stack.push(x == y)
+                stack.push((x ==1) && (y == 1))
             }
 
             case "or" => {

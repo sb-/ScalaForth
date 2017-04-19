@@ -15,6 +15,26 @@ class ConditionalLoopSpec extends FlatSpec with Matchers {
         assert(forth.getStackState() == List())
     }
 
+    "Comparison/boolean operators" should "support less/greater than, equals" in {
+        val forth = new ForthInterpreter(List("10", "5", "lt", "10", "5", "gt",
+            "10", "5", "eql", "10", "10", "eql"))
+        forth.execute()
+        assert(forth.getStackState() == List(1, 0, 1, 0))
+    }
+    it should "support boolean operators and/or/invert" in {
+        var forth = new ForthInterpreter(List("0", "1", "and", "1", "0", "and", "1", "1", "and", "0", "0", "and"))
+        forth.execute()
+        assert(forth.getStackState() == List(0, 1, 0, 0))
+
+        forth = new ForthInterpreter(List("0", "1", "or", "1", "0", "or", "1", "1", "or", "0", "0", "or"))
+        forth.execute()
+        assert(forth.getStackState() == List(0, 1, 1, 1))
+
+        forth = new ForthInterpreter(List("0", "invert", "1", "invert"))
+        forth.execute()
+        assert(forth.getStackState() == List(0, 1))
+    }
+
     "Variables/Constants" should "support variables" in {
         var forth = new ForthInterpreter(List("variable", "test", "test"))
         forth.execute()
