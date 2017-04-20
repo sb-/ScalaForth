@@ -24,7 +24,7 @@ class ForthInterpreter(prog: List[String]) {
     }
 
     def executeToken(token: String, pc: Int): Int = {
-        if (conditional_stack.length > 1 && token != "THEN") {
+        if (conditional_stack.length > 0 && token != "then") {
             val (condtype, condval) = conditional_stack.top
             if ((condtype == "iff" && condval == 0 && token != "elsef") ||
                 (condtype == "elsef" && condval == 0)) {
@@ -120,7 +120,11 @@ class ForthInterpreter(prog: List[String]) {
                 stack.push(!(x>0))
             }
             case "defn" => {
-                // TODO: add to definition
+                val function_name = program(pc + 1)
+                val function_end = program.indexOf("enddef", pc + 1)
+                println(s"start: $pc + 1 function end: $function_end")
+                functions.put(function_name, pc + 1)
+                return function_end + 1
             }
             case "end" => {}
             case "emitstr" => {

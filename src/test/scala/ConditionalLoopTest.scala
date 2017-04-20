@@ -23,7 +23,7 @@ class ConditionalLoopSpec extends FlatSpec with Matchers {
         forth = new ForthInterpreter(List("0", "iff", "66", "elsef", "77", "then", 
             "1", "iff", "99", "then"))
         forth.execute()
-        assert(forth.getStackState() == List(77, 99))
+        assert(forth.getStackState() == List(99, 77))
     }
 
 
