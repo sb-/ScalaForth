@@ -6,7 +6,6 @@ object ScalaForth extends App {
         println("before ForthInterpreter")
         val forth = new ForthInterpreter(List("defn", "loop-color-test", "1600", "1", "DO", "2", "rand", "i", "graphics", "add",
             "vwrite", "LOOP", "enddef", "begin", "loop-color-test", "1", "until"))
-        //val forth = new ForthInterpreter(List("576", "1", "DO", "2", "rand", "i", "graphics", "add", "vwrite", "LOOP"))
         println("executing forth interpreter")
         forth.execute()
     }

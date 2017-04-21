@@ -10,6 +10,12 @@ class ArithmeticSpec extends FlatSpec with Matchers {
         assert(forth.getStackState() == List(3))
     }
 
+    it should "interpret negative numbers correctly" in {
+        val forth = new ForthInterpreter(List("5", "-10", "add"))
+        forth.execute()
+        assert(forth.getStackState() == List(-5))
+    }
+
     it should "subtract two numbers correctly" in {
         val forth = new ForthInterpreter(List("5", "4", "sub"))
         forth.execute()

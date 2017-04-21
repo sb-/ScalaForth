@@ -95,7 +95,8 @@ class ForthInterpreter(prog: List[String]) {
                 return pc + 1
             }
         }
-        val is_num = token.forall(_.isDigit)
+        val is_num = token.forall(_.isDigit) ||
+            (token.substring(1, token.length).forall(_.isDigit) && token(0) == '-')
         if (is_num) {
             stack.push(token.toInt)
             return pc + 1
