@@ -1,5 +1,6 @@
 import collection.mutable.Stack
 import org.scalatest._
+import interpreter.ForthInterpreter
 
 class ArithmeticSpec extends FlatSpec with Matchers {
 

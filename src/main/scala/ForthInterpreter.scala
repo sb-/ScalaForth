@@ -1,4 +1,24 @@
+package interpreter
+
+import javafx.embed.swing.JFXPanel
+import scalafx.Includes._
+import scalafx.application.JFXApp
+import scalafx.stage.Stage
+import scalafx.beans.property.DoubleProperty.sfxDoubleProperty2jfx
+import scalafx.scene.canvas.Canvas
+import scalafx.scene.input.MouseEvent
+import scalafx.scene.paint.Stop.sfxStop2jfx
+import scalafx.scene.paint.{Color, CycleMethod, LinearGradient, Stop}
+import scalafx.scene.shape.Rectangle
+import scalafx.scene.{Group, Scene}
+import scalafx.application.Platform
+
+
+
 class ForthInterpreter(prog: List[String]) {
+
+
+
     implicit def bool2int(b:Boolean) = if (b) 1 else 0
 
     val program = prog
@@ -14,12 +34,56 @@ class ForthInterpreter(prog: List[String]) {
     val CELL_SIZE = 1
     var free_index = 1000
     var variables_to_addr = scala.collection.mutable.Map[String, Int]()
+
+    val GRAPHICS_DIM = 40
+    val graphics_size = GRAPHICS_DIM * GRAPHICS_DIM
+    val GRAPHICS_CHUNKS = 20
+    val scaleFactor = GRAPHICS_DIM / GRAPHICS_CHUNKS
+    val GRAPHICS_START = MEM_CELLS / 2
+    constants.put("graphics", GRAPHICS_START)
+
+    new JFXPanel()
+    val canvas = new Canvas(200, 200)
+
+    Platform.runLater {
+        val dialogStage = new Stage {
+            title = "TestStage"
+            val rootPane = new Group
+            rootPane.children = List(canvas)
+            scene = new Scene(400, 400) {
+                root = rootPane
+            }
+        }
+        dialogStage.showAndWait()
+        Platform.exit()
+    }
+
+    // canvas.translateX = 100
+    // canvas.translateY = 100
+
+    val gc = canvas.graphicsContext2D
+
     
+    
+    def updateGraphics() {
+        val r = 0 to graphics_size
+        r.foreach(i => {
+            val x = i / GRAPHICS_CHUNKS
+            val y = i % GRAPHICS_CHUNKS
+            var color = Color.WHITE
+            if (memory(GRAPHICS_START + i) > 0) {
+                color = Color.BLACK
+            }
+            gc.fill = color
+            gc.fillRect(x * scaleFactor, y * scaleFactor, x+scaleFactor, y+scaleFactor)
+        })
+    }
     def execute() {
         var pc = 0
         while (pc < program.length) {
-            val current_token = program(pc);
-            pc = executeToken(program(pc), pc);
+            val current_token = program(pc)
+            pc = executeToken(program(pc), pc)
+            updateGraphics()
         }
     }
 
@@ -122,8 +186,7 @@ class ForthInterpreter(prog: List[String]) {
             case "defn" => {
                 val function_name = program(pc + 1)
                 val function_end = program.indexOf("enddef", pc + 1)
-                println(s"start: $pc + 1 function end: $function_end")
-                functions.put(function_name, pc + 1)
+                functions.put(function_name, pc + 2)
                 return function_end + 1
             }
             case "end" => {}
@@ -142,9 +205,9 @@ class ForthInterpreter(prog: List[String]) {
                 conditional_stack.push(("elsef", condval < 1))
             }
             case "then" => {
-                val (condtype, condval) = conditional_stack.pop;
+                val (condtype, condval) = conditional_stack.pop
                 if (condtype == "elsef") {
-                    val (condtype, condval) = conditional_stack.pop;
+                    val (condtype, condval) = conditional_stack.pop
                     // TODO: Throw an exception
                 } else if (condtype != "iff") {
                     // TODO: Throw an exception

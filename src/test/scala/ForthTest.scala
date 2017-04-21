@@ -1,6 +1,6 @@
 import collection.mutable.Stack
 import org.scalatest._
-
+import interpreter.ForthInterpreter
 class ForthSpec extends FlatSpec with Matchers {
 
     "Stack manipulations" should "initialize without crashing" in {

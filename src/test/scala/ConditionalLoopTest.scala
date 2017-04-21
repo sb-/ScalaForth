@@ -1,6 +1,6 @@
 import collection.mutable.Stack
 import org.scalatest._
-
+import interpreter.ForthInterpreter
 class ConditionalLoopSpec extends FlatSpec with Matchers {
     "Conditionals" should "support begin-until loops" in {
         val forth = new ForthInterpreter(List("10", "begin", "printstack", "1", "sub", "dup", "dup", "dot", "until", "6"))
