@@ -16,9 +16,12 @@ import scalafx.application.Platform
 
 
 class ForthInterpreter(prog: List[String]) {
-
-
-
+    val debug_enabled = true    
+    def DEBUG(s: Any) {
+        if (debug_enabled) {
+            println(s)
+        }
+    }
     implicit def bool2int(b:Boolean) = if (b) 1 else 0
 
     val program = prog
@@ -192,7 +195,8 @@ class ForthInterpreter(prog: List[String]) {
             }
             case "end" => {}
             case "emitstr" => {
-                // TODO: print next token
+                print(program(pc + 1))
+                return pc + 2
             }
             case "iff" => {
                 val x = stack.pop
@@ -201,24 +205,30 @@ class ForthInterpreter(prog: List[String]) {
             case "elsef" => {
                 val (condtype, condval) = conditional_stack.top
                 if (condtype != "iff") {
-                    // TODO: throw some sort of exception
+                    throw new Exception("reached elsef with no if!")
                 }
                 conditional_stack.push(("elsef", condval < 1))
             }
             case "then" => {
                 val (condtype, condval) = conditional_stack.pop
                 if (condtype == "elsef") {
-                    val (condtype, condval) = conditional_stack.pop
-                    // TODO: Throw an exception
+                    val (condtype, condval) = conditional_stack.top
+                    if (condtype == "iff") {
+                        conditional_stack.pop
+                    } else {
+                        throw new Exception("Invalid order of iff/elsef!")
+                    }
                 } else if (condtype != "iff") {
-                    // TODO: Throw an exception
+                    throw new Exception("then without a preceding iff!")
                 }
             }
             case "key" => stack.push(scala.io.StdIn.readChar())
             case "enddef" => {
+                DEBUG(conditional_stack)
                 val (jumptype, newpc) = conditional_stack.pop
                 if (jumptype != "funccall") {
-                    // TODO: throw an exception
+                    DEBUG(program(pc-2), program(pc-1), program(pc), program(pc + 1), program(pc + 2))
+                    throw new Exception("enddef when not in a function call!")
                 }
                 return newpc
             }
@@ -230,10 +240,23 @@ class ForthInterpreter(prog: List[String]) {
                 conditional_stack.push(("DO", pc + 1))
             }
             case "i" => {
+                if (do_loop_stack.length > 1){
+                    var (loop_count, end) = do_loop_stack.pop
+                    var (loop_count2, end2) = do_loop_stack.pop
+                    do_loop_stack.push((loop_count2, end2))
+                    do_loop_stack.push((loop_count, end))
+                    stack.push(loop_count2)
+                }
+                val (loop_count, end) = do_loop_stack.top
+                stack.push(loop_count)
+                
+            }
+            case "j" => {
                 val (loop_count, end) = do_loop_stack.top
                 stack.push(loop_count)
             }
             case "LOOP" => {
+                DEBUG(conditional_stack)
                 val (condtype, condval) = conditional_stack.pop
                 val (loop_count, end) = do_loop_stack.pop
                 if (loop_count != end) {
@@ -294,23 +317,28 @@ class ForthInterpreter(prog: List[String]) {
                 val r = scala.util.Random
                 stack.push(r.nextInt(stack.pop))
             }
+
+            case "last-key" => {
+                stack.push(lastKeyPressed)
+            }
             case _ => {
                 val funcdef = functions.get(token)
+                val const = constants.get(token)
+                val varaddr = variables_to_addr.get(token)
+
                 if (funcdef.isDefined) {
                     conditional_stack.push(("funccall", pc + 1))
                     return funcdef.get
                 }
-
-                val const = constants.get(token)
-                if (const.isDefined) {
+                else if (const.isDefined) {
                     stack.push(const.get)
                     return pc + 1
                 }
-
-                val varaddr = variables_to_addr.get(token)
-                if (varaddr.isDefined) {
+                else if (varaddr.isDefined) {
                     stack.push(varaddr.get)
                     return pc + 1
+                } else {
+                    throw new Exception("unrecognized token: " + token)
                 }
             }
         }
