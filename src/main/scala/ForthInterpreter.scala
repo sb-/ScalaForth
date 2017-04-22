@@ -12,6 +12,7 @@ import scalafx.scene.paint.{Color, CycleMethod, LinearGradient, Stop}
 import scalafx.scene.shape.Rectangle
 import scalafx.scene.{Group, Scene}
 import scalafx.application.Platform
+import scalafx.scene.input.{KeyCode, KeyEvent, MouseEvent}
 
 
 
@@ -38,11 +39,13 @@ class ForthInterpreter(prog: List[String]) {
     var free_index = 1000
     var variables_to_addr = scala.collection.mutable.Map[String, Int]()
 
-    val GRAPHICS_DIM = 40
+    val GRAPHICS_DIM = 24
     val graphics_size = GRAPHICS_DIM * GRAPHICS_DIM
-    val GRAPHICS_CHUNKS = 20
+    val GRAPHICS_CHUNKS = 24
     val scaleFactor = GRAPHICS_DIM / GRAPHICS_CHUNKS
     val GRAPHICS_START = MEM_CELLS / 2
+
+    var lastKeyPressed = 0
     constants.put("graphics", GRAPHICS_START)
 
     new JFXPanel()
@@ -51,7 +54,9 @@ class ForthInterpreter(prog: List[String]) {
     Platform.runLater {
         val dialogStage = new Stage {
             title = "TestStage"
-            val rootPane = new Group
+            val rootPane = new Group {
+                onKeyPressed = (k: KeyEvent) => lastKeyPressed = k.getCharacter.toInt
+            }
             rootPane.children = List(canvas)
             scene = new Scene(400, 400) {
                 root = rootPane
@@ -61,32 +66,33 @@ class ForthInterpreter(prog: List[String]) {
         Platform.exit()
     }
 
-    // canvas.translateX = 100
-    // canvas.translateY = 100
-
     val gc = canvas.graphicsContext2D
+    gc.fill = Color.RED
+    gc.fillRect(0, 0, canvas.width.get, canvas.height.get)
+
+    canvas.translateX = 150
+    canvas.translateY = 150
 
     
-    
-    def updateGraphics() {
-        val r = 0 to graphics_size
-        r.foreach(i => {
-            val x = i / GRAPHICS_CHUNKS
-            val y = i % GRAPHICS_CHUNKS
-            var color = Color.WHITE
-            if (memory(GRAPHICS_START + i) > 0) {
-                color = Color.BLACK
-            }
-            gc.fill = color
-            gc.fillRect(x * scaleFactor, y * scaleFactor, x+scaleFactor, y+scaleFactor)
-        })
+    def updateGraphics(addr: Int) {
+        val i = addr - GRAPHICS_START
+
+        val x = i / GRAPHICS_CHUNKS
+        val y = i % GRAPHICS_CHUNKS
+
+        var color = Color.BLACK
+        if (memory(addr) > 0) {
+            color = Color.WHITE
+        }
+        gc.fill = color
+        gc.fillRect(x * scaleFactor, y * scaleFactor, scaleFactor, scaleFactor)
     }
     def execute() {
         var pc = 0
         while (pc < program.length) {
             val current_token = program(pc)
+            DEBUG(s"Executing token $current_token at $pc.")
             pc = executeToken(program(pc), pc)
-            updateGraphics()
         }
     }
 
@@ -298,6 +304,9 @@ class ForthInterpreter(prog: List[String]) {
                 val addr = stack.pop
                 val write_value = stack.pop
                 memory(addr) = write_value
+                if (addr >= GRAPHICS_START && addr <= GRAPHICS_START + graphics_size) {
+                    updateGraphics(addr);
+                }
             }
             case "allot" => {
                 var length = stack.pop

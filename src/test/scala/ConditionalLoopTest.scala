@@ -14,6 +14,11 @@ class ConditionalLoopSpec extends FlatSpec with Matchers {
         forth.execute()
         assert(forth.getStackState() == List())
     }
+    it should "support nested do-loops" in {
+        /*val forth = new ForthInterpreter(List("10", "0", "DO", "5", "0", "DO", "j", "i", "add", "dot", "LOOP", "LOOP"))
+        forth.execute()
+        assert(forth.getStackState() == List())*/
+    }
     it should "support iff..[elsef]..then" in {
         var forth = new ForthInterpreter(List("0", "iff", "66", "then", 
             "1", "iff", "99", "then"))
