@@ -316,11 +316,23 @@ class ForthInterpreter(prog: List[String]) {
                 return pc + 2
             }
             case "vread" => {
-                val addr = stack.pop
-                stack.push(memory(addr))
+                // TODO: fix this hack
+                if (program(pc - 1) == "last-key") {
+                    stack.push(lastKeyPressed)
+                } else {
+                    val addr = stack.pop
+                    stack.push(memory(addr))
+                }
+            }
+            case "last-key" => {
+
             }
 
             case "vwrite" => {
+                if (program(pc - 1) == "last-key") {
+                    lastKeyPressed = stack.pop
+                    return pc + 1
+                }
                 val addr = stack.pop
                 val write_value = stack.pop
                 memory(addr) = write_value
@@ -347,9 +359,6 @@ class ForthInterpreter(prog: List[String]) {
                 stack.push(r.nextInt(stack.pop))
             }
 
-            case "last-key" => {
-                stack.push(lastKeyPressed)
-            }
             case _ => {
                 val funcdef = functions.get(token)
                 val const = constants.get(token)
