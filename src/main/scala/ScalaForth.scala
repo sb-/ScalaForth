@@ -74,7 +74,7 @@ object ScalaForth extends App {
             "defn", "move-snake-tail", "0", "length", "vread", "DO",
             "i", "snake-x", "vread", "i", "1", "add", "snake-x", "vwrite",
             "i", "snake-y", "vread", "i", "1", "add", "snake-y", "vwrite",
-            "-1", "add", "LOOP", "enddef",
+            "-1", "LOOPADD", "enddef",
 
             "defn", "is-horizontal", "direction", "vread", "dup",
             "left", "eql", "swap",

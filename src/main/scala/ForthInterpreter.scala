@@ -288,6 +288,18 @@ class ForthInterpreter(prog: List[String]) {
                     return condval
                 } 
             }
+            case "LOOPADD" => {
+                DEBUG(conditional_stack)
+                val (condtype, condval) = conditional_stack.pop
+                val (loop_count, end) = do_loop_stack.pop
+                val amt = stack.pop
+                if (loop_count != end) {
+                    conditional_stack.push((condtype, condval))
+                    do_loop_stack.push((loop_count + amt, end))
+                    return condval
+                } 
+            }
+
             case "begin" => conditional_stack.push(("begin", pc + 1))
             case "until" => {
                 val x = stack.pop
