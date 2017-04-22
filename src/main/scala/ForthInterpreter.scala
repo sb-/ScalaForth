@@ -46,7 +46,10 @@ class ForthInterpreter(prog: List[String]) {
     val GRAPHICS_START = MEM_CELLS / 2
 
     var lastKeyPressed = 0
+    var lastKeyAddr = GRAPHICS_START - CELL_SIZE
     constants.put("graphics", GRAPHICS_START)
+    variables_to_addr.put("last-key", lastKeyAddr)
+
 
     new JFXPanel()
     val canvas = new Canvas(200, 200)
@@ -61,10 +64,10 @@ class ForthInterpreter(prog: List[String]) {
                 root = rootPane
                 onKeyPressed = (k: KeyEvent) => {
                     k.code match {
-                        case KeyCode.A => lastKeyPressed = 37
-                        case KeyCode.W => lastKeyPressed = 38
-                        case KeyCode.D => lastKeyPressed = 39
-                        case KeyCode.S => lastKeyPressed = 40
+                        case KeyCode.A => memory(lastKeyAddr) = 37
+                        case KeyCode.W => memory(lastKeyAddr) = 38
+                        case KeyCode.D => memory(lastKeyAddr) = 39
+                        case KeyCode.S => memory(lastKeyAddr) = 40
                         case _ => 
                     }
                     println("lastKeyPressed in handler: " + lastKeyPressed)
@@ -366,11 +369,6 @@ class ForthInterpreter(prog: List[String]) {
             case "rand" => {
                 val r = scala.util.Random
                 stack.push(r.nextInt(stack.pop))
-            }
-
-            case "last-key" => {
-                println("lastKeyPressed in operation: " + lastKeyPressed)
-                stack.push(lastKeyPressed)
             }
             case _ => {
                 val funcdef = functions.get(token)
