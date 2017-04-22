@@ -30,6 +30,16 @@ class ConditionalLoopSpec extends FlatSpec with Matchers {
         forth.execute()
         assert(forth.getStackState() == List(99, 77))
     }
+    it should "support nested iff/elsef" in {
+        var forth = new ForthInterpreter(List("3",
+            "1", "over", "eql", "iff", "11", "elsef",
+            "2", "over", "eql", "iff", "22", "elsef",
+            "3", "over", "eql", "iff", "33", "elsef",
+            "4", "over", "eql", "iff", "44",
+            "then", "then", "then", "then", "drop"))
+        forth.execute()
+        assert(forth.getStackState() == List(33, 3))
+    }
 
 
 

@@ -91,19 +91,22 @@ class ForthInterpreter(prog: List[String]) {
         var pc = 0
         while (pc < program.length) {
             val current_token = program(pc)
-            DEBUG(s"Executing token $current_token at $pc.")
             pc = executeToken(program(pc), pc)
         }
     }
 
     def executeToken(token: String, pc: Int): Int = {
-        if (conditional_stack.length > 0 && token != "then") {
+        if (conditional_stack.length > 0 && token != "then" && token != "iff" && token != "elsef") {
             val (condtype, condval) = conditional_stack.top
             if ((condtype == "iff" && condval == 0 && token != "elsef") ||
                 (condtype == "elsef" && condval == 0)) {
                 return pc + 1
             }
         }
+        val current_token = program(pc)
+
+        DEBUG(s"Executing token $current_token at $pc.")
+
         val is_num = token.forall(_.isDigit) ||
             (token.substring(1, token.length).forall(_.isDigit) && token(0) == '-')
         if (is_num) {
@@ -205,17 +208,31 @@ class ForthInterpreter(prog: List[String]) {
                 return pc + 2
             }
             case "iff" => {
+                DEBUG("before iff: " + conditional_stack)
+                if (conditional_stack.length > 0) {
+                    val (condtype, condval) = conditional_stack.top
+                    if (condval == 0) {
+                        conditional_stack.push(("iff", -1))
+                        return pc + 1
+                    }
+                }
                 val x = stack.pop
                 conditional_stack.push(("iff", x))
             }
             case "elsef" => {
+                DEBUG("before elsef: " + conditional_stack)
                 val (condtype, condval) = conditional_stack.top
                 if (condtype != "iff") {
                     throw new Exception("reached elsef with no if!")
                 }
-                conditional_stack.push(("elsef", condval < 1))
+                if (condval == -1) {
+                    conditional_stack.push(("elsef", -1))
+                } else {
+                    conditional_stack.push(("elsef", condval < 1))
+                }
             }
             case "then" => {
+                DEBUG("before then: " + conditional_stack)
                 val (condtype, condval) = conditional_stack.pop
                 if (condtype == "elsef") {
                     val (condtype, condval) = conditional_stack.top
@@ -275,6 +292,9 @@ class ForthInterpreter(prog: List[String]) {
             case "until" => {
                 val x = stack.pop
                 val (condtype, condval) = conditional_stack.pop
+                if (condtype != "begin") {
+                    throw new Exception("until with no begin!")
+                }
                 if (x != 0) {
                     conditional_stack.push((condtype, condval))
                     return condval
