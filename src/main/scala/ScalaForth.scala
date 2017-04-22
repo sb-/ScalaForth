@@ -71,7 +71,7 @@ object ScalaForth extends App {
             "down", "over", "eql", "iff", "move-down",
             "then", "then", "then", "then", "drop", "enddef",
 
-            "defn", "move-snake-tail", "length", "vread", "0", "DO",
+            "defn", "move-snake-tail", "0", "length", "vread", "DO",
             "i", "snake-x", "vread", "i", "1", "add", "snake-x", "vwrite",
             "i", "snake-y", "vread", "i", "1", "add", "snake-y", "vwrite",
             "-1", "add", "LOOP", "enddef",
@@ -136,16 +136,19 @@ object ScalaForth extends App {
             "begin",
             "draw-snake",
             "draw-apple",
-            "10", "sleep",
+            "100", "sleep",
             "check-input",
             "move-snake-tail",
             "move-snake-head",
             "check-apple",
             "check-collision",
             "until",
-            "emitstr", " Game Over!", "enddef",
+            "emitstr", " Game, Over", "enddef",
 
             "defn", "start", "initialize", "game-loop", "enddef",
+            // "initialize",
+            // "draw-snake",
+            // "draw-apple",
             "start"
             ))
         println("executing forth interpreter")
