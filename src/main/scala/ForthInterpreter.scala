@@ -39,7 +39,7 @@ class ForthInterpreter(prog: List[String]) {
     var free_index = 1000
     var variables_to_addr = scala.collection.mutable.Map[String, Int]()
 
-    val GRAPHICS_DIM = 24
+    val GRAPHICS_DIM = 192
     val graphics_size = GRAPHICS_DIM * GRAPHICS_DIM
     val GRAPHICS_CHUNKS = 24
     val scaleFactor = GRAPHICS_DIM / GRAPHICS_CHUNKS
@@ -70,7 +70,7 @@ class ForthInterpreter(prog: List[String]) {
                         case KeyCode.S => memory(lastKeyAddr) = 40
                         case _ => 
                     }
-                    println("lastKeyPressed in handler: " + lastKeyPressed)
+                    println("lastKeyPressed in handler: " + memory(lastKeyAddr))
                 }
             }
         }
@@ -79,8 +79,8 @@ class ForthInterpreter(prog: List[String]) {
     }
 
     val gc = canvas.graphicsContext2D
-    gc.fill = Color.RED
-    gc.fillRect(0, 0, canvas.width.get, canvas.height.get)
+    // gc.fill = Color.RED
+    // gc.fillRect(0, 0, canvas.width.get, canvas.height.get)
 
     canvas.translateX = 150
     canvas.translateY = 150
@@ -281,10 +281,10 @@ class ForthInterpreter(prog: List[String]) {
                     do_loop_stack.push((loop_count2, end2))
                     do_loop_stack.push((loop_count, end))
                     stack.push(loop_count2)
+                    return pc + 1
                 }
                 val (loop_count, end) = do_loop_stack.top
                 stack.push(loop_count)
-                
             }
             case "j" => {
                 val (loop_count, end) = do_loop_stack.top
@@ -294,7 +294,7 @@ class ForthInterpreter(prog: List[String]) {
                 DEBUG(conditional_stack)
                 val (condtype, condval) = conditional_stack.pop
                 val (loop_count, end) = do_loop_stack.pop
-                if (loop_count != end) {
+                if (loop_count != end - 1) {
                     conditional_stack.push((condtype, condval))
                     do_loop_stack.push((loop_count + 1, end))
                     return condval
@@ -305,7 +305,7 @@ class ForthInterpreter(prog: List[String]) {
                 val (condtype, condval) = conditional_stack.pop
                 val (loop_count, end) = do_loop_stack.pop
                 val amt = stack.pop
-                if (loop_count != end) {
+                if (math.abs(loop_count - end) > 0){
                     conditional_stack.push((condtype, condval))
                     do_loop_stack.push((loop_count + amt, end))
                     return condval

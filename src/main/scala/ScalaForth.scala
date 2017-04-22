@@ -6,7 +6,8 @@ object ScalaForth extends App {
         println("before ForthInterpreter")
         /*val forth = new ForthInterpreter(List("defn", "loop-color-test", "1600", "1", "DO", "2", "rand", "i", "graphics", "add",
             "vwrite", "LOOP", "enddef", "begin", "loop-color-test", "1", "until"))*/
-        val forth = new ForthInterpreter(List("defn", "convert-x-y", "24", "cells", "mul", "add", "enddef",
+        val forth = new ForthInterpreter(List(
+            "defn", "convert-x-y", "24", "cells", "mul", "add", "enddef",
             "defn", "draw", "convert-x-y", "graphics", "add", "vwrite", "enddef",
             "defn", "draw-white", "1", "rot", "rot", "draw", "enddef",
             "defn", "draw-black", "0", "rot", "rot", "draw", "enddef",
@@ -52,17 +53,22 @@ object ScalaForth extends App {
             "defn", "initialize",
             "width", "0", "DO",
             "height", "0", "DO",
-            "j", "i", "draw-white",
+                "j", "i", "draw-white",
             "LOOP",
             "LOOP",
             "draw-walls",
             "initialize-snake",
             "initialize-apple", "enddef",
 
-            "defn", "move-up", "-1", "snake-y-head", "add", "vwrite", "enddef",
-            "defn", "move-left", "-1", "snake-x-head", "add", "vwrite", "enddef",
-            "defn", "move-down", "1", "snake-y-head", "add", "vwrite", "enddef",
-            "defn", "move-right", "1", "snake-x-head", "add", "vwrite", "enddef",
+            // "defn", "move-up", "-1", "snake-y-head", "add", "vwrite", "enddef",
+            // "defn", "move-left", "-1", "snake-x-head", "add", "vwrite", "enddef",
+            // "defn", "move-down", "1", "snake-y-head", "add", "vwrite", "enddef",
+            // "defn", "move-right", "1", "snake-x-head", "add", "vwrite", "enddef",
+
+            "defn", "move-up", "-1", "snake-y-head", "vread",  "add", "snake-y-head", "vwrite", "enddef",
+            "defn", "move-left", "-1", "snake-x-head", "vread", "add", "snake-x-head", "vwrite", "enddef",
+            "defn", "move-down", "1", "snake-y-head", "vread", "add", "snake-y-head", "vwrite", "enddef",
+            "defn", "move-right", "1", "snake-x-head",  "vread", "add", "snake-x-head", "vwrite", "enddef",
 
             "defn", "move-snake-head", "direction", "vread",
             "left", "over", "eql", "iff", "move-left", "elsef",
@@ -108,7 +114,8 @@ object ScalaForth extends App {
             "random-position", "random-position",
             "set-apple-position", "enddef",
 
-            "defn", "grow-snake", "1", "length", "add", "vwrite", "enddef",
+            // "defn", "grow-snake", "1", "length", "add", "vwrite", "enddef",
+            "defn", "grow-snake", "1", "length", "vread", "add", "length", "vwrite", "enddef",
 
             "defn", "check-apple",
             "snake-x-head", "vread", "apple-x", "vread", "eql",
@@ -119,7 +126,7 @@ object ScalaForth extends App {
             "then", "enddef",
 
             "defn", "check-collision", "snake-x-head", "vread", "snake-y-head", "vread",
-            "convert-x-y", "graphics", "add", "vread", "0", "eql", "enddef",
+            "convert-x-y", "graphics", "add", "vread", "1", "eql", "enddef",
 
             "defn", "draw-snake",
             "length", "vread", "0", "DO",
@@ -134,9 +141,10 @@ object ScalaForth extends App {
 
             "defn", "game-loop",
             "begin",
+            "printstack",
             "draw-snake",
             "draw-apple",
-            "100", "sleep",
+            "1000", "sleep",
             "check-input",
             "move-snake-tail",
             "move-snake-head",
@@ -146,9 +154,6 @@ object ScalaForth extends App {
             "emitstr", " Game, Over", "enddef",
 
             "defn", "start", "initialize", "game-loop", "enddef",
-            // "initialize",
-            // "draw-snake",
-            // "draw-apple",
             "start"
             ))
         println("executing forth interpreter")
