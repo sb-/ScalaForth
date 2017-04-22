@@ -54,12 +54,21 @@ class ForthInterpreter(prog: List[String]) {
     Platform.runLater {
         val dialogStage = new Stage {
             title = "TestStage"
-            val rootPane = new Group {
-                onKeyPressed = (k: KeyEvent) => lastKeyPressed = k.getCharacter.toInt
-            }
+            val rootPane = new Group
             rootPane.children = List(canvas)
+            rootPane.setFocusTraversable(true)
             scene = new Scene(400, 400) {
                 root = rootPane
+                onKeyPressed = (k: KeyEvent) => {
+                    k.code match {
+                        case KeyCode.A => lastKeyPressed = 37
+                        case KeyCode.W => lastKeyPressed = 38
+                        case KeyCode.D => lastKeyPressed = 39
+                        case KeyCode.S => lastKeyPressed = 40
+                        case _ => 
+                    }
+                    println("lastKeyPressed in handler: " + lastKeyPressed)
+                }
             }
         }
         dialogStage.showAndWait()
@@ -360,6 +369,7 @@ class ForthInterpreter(prog: List[String]) {
             }
 
             case "last-key" => {
+                println("lastKeyPressed in operation: " + lastKeyPressed)
                 stack.push(lastKeyPressed)
             }
             case _ => {
