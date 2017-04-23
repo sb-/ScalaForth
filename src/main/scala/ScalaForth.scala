@@ -65,10 +65,10 @@ object ScalaForth extends App {
             // "defn", "move-down", "1", "snake-y-head", "add", "vwrite", "enddef",
             // "defn", "move-right", "1", "snake-x-head", "add", "vwrite", "enddef",
 
-            "defn", "move-up", "-1", "snake-y-head", "vread",  "add", "snake-y-head", "vwrite", "enddef",
-            "defn", "move-left", "-1", "snake-x-head", "vread", "add", "snake-x-head", "vwrite", "enddef",
-            "defn", "move-down", "1", "snake-y-head", "vread", "add", "snake-y-head", "vwrite", "enddef",
-            "defn", "move-right", "1", "snake-x-head",  "vread", "add", "snake-x-head", "vwrite", "enddef",
+            "defn", "move-up", "-1", "snake-x-head", "vread",  "add", "snake-x-head", "vwrite", "enddef",
+            "defn", "move-left", "-1", "snake-y-head", "vread", "add", "snake-y-head", "vwrite", "enddef",
+            "defn", "move-down", "1", "snake-x-head", "vread", "add", "snake-x-head", "vwrite", "enddef",
+            "defn", "move-right", "1", "snake-y-head",  "vread", "add", "snake-y-head", "vwrite", "enddef",
 
             "defn", "move-snake-head", "direction", "vread",
             "left", "over", "eql", "iff", "move-left", "elsef",
