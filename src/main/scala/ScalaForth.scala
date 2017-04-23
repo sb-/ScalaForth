@@ -144,7 +144,7 @@ object ScalaForth extends App {
             "printstack",
             "draw-snake",
             "draw-apple",
-            "1000", "sleep",
+            "100", "sleep",
             "check-input",
             "move-snake-tail",
             "move-snake-head",
