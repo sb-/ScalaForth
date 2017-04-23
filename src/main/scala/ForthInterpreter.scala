@@ -79,8 +79,6 @@ class ForthInterpreter(prog: List[String]) {
     }
 
     val gc = canvas.graphicsContext2D
-    // gc.fill = Color.RED
-    // gc.fillRect(0, 0, canvas.width.get, canvas.height.get)
 
     canvas.translateX = 150
     canvas.translateY = 150
@@ -107,11 +105,16 @@ class ForthInterpreter(prog: List[String]) {
         }
     }
 
+    def dumpVariables() {
+        for ((k,v) <- variables_to_addr) {
+            printf("var: %s $k val: %d \n", k, memory(v))
+        }
+    }
+
     def executeToken(token: String, pc: Int): Int = {
         if (conditional_stack.length > 0 && token != "then" && token != "iff" && token != "elsef") {
             val (condtype, condval) = conditional_stack.top
-            if ((condtype == "iff" && condval == 0 && token != "elsef") ||
-                (condtype == "elsef" && condval == 0)) {
+            if ((condtype == "iff" && condval < 1) || (condtype == "elsef" && condval < 1)) {
                 return pc + 1
             }
         }
@@ -223,7 +226,7 @@ class ForthInterpreter(prog: List[String]) {
                 DEBUG("before iff: " + conditional_stack)
                 if (conditional_stack.length > 0) {
                     val (condtype, condval) = conditional_stack.top
-                    if (condval == 0) {
+                    if (condval < 1) {
                         conditional_stack.push(("iff", -1))
                         return pc + 1
                     }

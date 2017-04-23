@@ -36,7 +36,7 @@ class ConditionalLoopSpec extends FlatSpec with Matchers {
             "2", "over", "eql", "iff", "22", "elsef",
             "3", "over", "eql", "iff", "33", "elsef",
             "4", "over", "eql", "iff", "44",
-            "then", "then", "then", "then", "drop"))
+            "then", "then", "then", "then"))
         forth.execute()
         assert(forth.getStackState() == List(33, 3))
     }

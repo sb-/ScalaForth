@@ -45,7 +45,7 @@ object ScalaForth extends App {
             "12", "i", "sub", "i", "snake-x", "vwrite",
             "12", "i", "snake-y", "vwrite",
             "LOOP",
-            "right", "direction", "vwrite", "enddef",
+            "left", "direction", "vwrite", "enddef",
 
             "defn", "set-apple-position", "apple-x", "vwrite", "apple-y", "vwrite", "enddef",
             "defn", "initialize-apple", "4", "4", "set-apple-position", "enddef",
