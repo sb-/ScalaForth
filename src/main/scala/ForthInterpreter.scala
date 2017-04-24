@@ -218,6 +218,7 @@ class ForthInterpreter(prog: List[String]) {
                 return function_end + 1
             }
             case "end" => {}
+            case "lol" => {}
             case "emitstr" => {
                 print(program(pc + 1))
                 return pc + 2
@@ -338,7 +339,7 @@ class ForthInterpreter(prog: List[String]) {
                 val name = program(pc + 1)
                 val addr = free_index
                 free_index += CELL_SIZE
-                // TODO: have a better way of indicating this
+                // TODO: dumpVariables()funchave a better way of indicating this
                 variables_to_addr.put(name, addr)
                 return pc + 2
             }
@@ -380,6 +381,8 @@ class ForthInterpreter(prog: List[String]) {
 
                 if (funcdef.isDefined) {
                     conditional_stack.push(("funccall", pc + 1))
+                    println("Calling function: " + token)
+                    dumpVariables()
                     return funcdef.get
                 }
                 else if (const.isDefined) {
