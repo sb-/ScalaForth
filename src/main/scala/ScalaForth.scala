@@ -4,8 +4,6 @@ import interpreter.ForthInterpreter
 object ScalaForth extends App {
     override def main(args: Array[String]) {
         println("before ForthInterpreter")
-        /*val forth = new ForthInterpreter(List("defn", "loop-color-test", "1600", "1", "DO", "2", "rand", "i", "graphics", "add",
-            "vwrite", "LOOP", "enddef", "begin", "loop-color-test", "1", "until"))*/
         val forth = new ForthInterpreter(List(
             "defn", "convert-x-y", "24", "cells", "mul", "add", "enddef",
             "defn", "draw", "convert-x-y", "graphics", "add", "vwrite", "enddef",
@@ -45,7 +43,7 @@ object ScalaForth extends App {
             "12", "i", "sub", "i", "snake-x", "vwrite",
             "12", "i", "snake-y", "vwrite",
             "LOOP",
-            "right", "direction", "vwrite", "enddef",
+            "left", "direction", "vwrite", "enddef",
 
             "defn", "set-apple-position", "apple-x", "vwrite", "apple-y", "vwrite", "enddef",
             "defn", "initialize-apple", "4", "4", "set-apple-position", "enddef",
@@ -65,10 +63,10 @@ object ScalaForth extends App {
             // "defn", "move-down", "1", "snake-y-head", "add", "vwrite", "enddef",
             // "defn", "move-right", "1", "snake-x-head", "add", "vwrite", "enddef",
 
-            "defn", "move-up", "-1", "snake-y-head", "vread",  "add", "snake-y-head", "vwrite", "enddef",
-            "defn", "move-left", "-1", "snake-x-head", "vread", "add", "snake-x-head", "vwrite", "enddef",
-            "defn", "move-down", "1", "snake-y-head", "vread", "add", "snake-y-head", "vwrite", "enddef",
-            "defn", "move-right", "1", "snake-x-head",  "vread", "add", "snake-x-head", "vwrite", "enddef",
+            "defn", "move-up", "-1", "snake-x-head", "vread",  "add", "snake-x-head", "vwrite", "enddef",
+            "defn", "move-left", "-1", "snake-y-head", "vread", "add", "snake-y-head", "vwrite", "enddef",
+            "defn", "move-down", "1", "snake-x-head", "vread", "add", "snake-x-head", "vwrite", "enddef",
+            "defn", "move-right", "1", "snake-y-head",  "vread", "add", "snake-y-head", "vwrite", "enddef",
 
             "defn", "move-snake-head", "direction", "vread",
             "left", "over", "eql", "iff", "move-left", "elsef",
@@ -144,7 +142,7 @@ object ScalaForth extends App {
             "printstack",
             "draw-snake",
             "draw-apple",
-            "1000", "sleep",
+            "100", "sleep",
             "check-input",
             "move-snake-tail",
             "move-snake-head",
