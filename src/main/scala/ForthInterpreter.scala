@@ -39,7 +39,7 @@ class ForthInterpreter(prog: List[String]) {
     var free_index = 1000
     var variables_to_addr = scala.collection.mutable.Map[String, Int]()
 
-    val GRAPHICS_DIM = 192
+    val GRAPHICS_DIM = 384
     val graphics_size = GRAPHICS_DIM * GRAPHICS_DIM
     val GRAPHICS_CHUNKS = 24
     val scaleFactor = GRAPHICS_DIM / GRAPHICS_CHUNKS
@@ -52,15 +52,15 @@ class ForthInterpreter(prog: List[String]) {
 
 
     new JFXPanel()
-    val canvas = new Canvas(200, 200)
+    val canvas = new Canvas(GRAPHICS_DIM, GRAPHICS_DIM)
 
     Platform.runLater {
         val dialogStage = new Stage {
-            title = "TestStage"
+            title = "ScalaForth Interpreter"
             val rootPane = new Group
             rootPane.children = List(canvas)
             rootPane.setFocusTraversable(true)
-            scene = new Scene(400, 400) {
+            scene = new Scene(GRAPHICS_DIM, GRAPHICS_DIM) {
                 root = rootPane
                 onKeyPressed = (k: KeyEvent) => {
                     k.code match {
@@ -80,8 +80,8 @@ class ForthInterpreter(prog: List[String]) {
 
     val gc = canvas.graphicsContext2D
 
-    canvas.translateX = 150
-    canvas.translateY = 150
+    //canvas.translateX = 150
+    //canvas.translateY = 150
 
     
     def updateGraphics(addr: Int) {
