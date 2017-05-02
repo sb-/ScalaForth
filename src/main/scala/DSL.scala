@@ -260,21 +260,13 @@ object ForthDSL {
         (new ForthInterpreter(prog.toList.filter(x => (x != "" && x != "s" && x != "lol")))).execute()
     }
 
-    implicit def bool2int(s:Symbol) = {
+    implicit class symbolconv(s:Symbol) {
         var x = new general_op
         x.optype = s.name
         x
     }
 
     def main(args: Array[String]): Unit = {
-            //defn 'fizz;  //3 mod 0 = dup iff emitstr " Fizz" then enddef
-            // defn 'fizz  3 mod 0 = dup iff emitstr " Fizz" then enddef
-            // defn 'buzz  5 mod 0 = dup iff emitstr " Buzz" then enddef
-            // defn 'fizzbuzz  dup 'fizz swap 'buzz or invert enddef
-            // defn 'dofizzbuzz  num(25) num(1) DO cr i 'fizzbuzz iff i dot then LOOP enddef
-            // 'dofizzbuzz
-
-
             defn s("convert-x-y") num(24) s("cells") mul add enddef
             defn s("draw") s("convert-x-y") s("graphics") add vwrite enddef
             defn s("draw-white") num(1) rot rot s("draw") enddef
@@ -300,8 +292,7 @@ object ForthDSL {
             defn s("draw-walls")
             s("width") num(0) DO
             i num(0) s("draw-black")
-            i s("height") num(1) sub s("draw-black")
-            LOOP lol
+            i s("height") num(1) sub s("draw-black") LOOP
             s("height") num(0) DO
             num(0) i s("draw-black")
             s("width") num(1) sub i s("draw-black")
@@ -313,8 +304,7 @@ object ForthDSL {
             num(4) s("length") vwrite
             s("length") vread num(1) add num(0) DO
             num(12) i sub i s("snake-x") vwrite
-            num(12) i s("snake-y") vwrite
-            LOOP lol
+            num(12) i s("snake-y") vwrite LOOP
             s("left") s("direction") vwrite enddef
 
             defn s("set-apple-position") s("apple-x") vwrite s("apple-y") vwrite enddef
@@ -324,10 +314,8 @@ object ForthDSL {
             s("width") num(0) DO
             s("height") num(0) DO
                 j i s("draw-white")
-            LOOP lol
-            LOOP lol
-            s("draw-walls") lol
-            s("initialize-snake") lol
+            LOOP LOOP
+            s("draw-walls") s("initialize-snake")
             s("initialize-apple") enddef
 
             defn s("move-up") num(-1) s("snake-x-head") vread  add s("snake-x-head") vwrite enddef
@@ -385,8 +373,7 @@ object ForthDSL {
             s("snake-x-head") vread s("apple-x") vread eql
             s("snake-y-head") vread s("apple-y") vread eql
             and iff
-            s("move-apple") lol
-            s("grow-snake") lol
+            s("move-apple") s("grow-snake")
             then enddef
 
             defn s("check-collision") s("snake-x-head") vread s("snake-y-head") vread
@@ -404,21 +391,14 @@ object ForthDSL {
 
             defn s("game-loop")
             begin printstack
-            s("draw-snake") lol
-            s("draw-apple") lol
+            s("draw-snake") s("draw-apple")
             num(100) sleep
-            s("check-input") lol
-            s("move-snake-tail") lol
-            s("move-snake-head") lol
-            s("check-apple") lol
-            s("check-collision") lol
-            until lol lol
+            s("check-input") s("move-snake-tail")
+            s("move-snake-head") s("check-apple")
+            s("check-collision") until
             emitstr s(" Game, Over") enddef
 
-            defn s("start") s("initialize") s("game-loop") enddef
-            s("start") lol
-
-            println(prog.toList.filter(x => (x != "" && x != "s" && x != "lol")))
+            defn s("start") s("initialize") s("game-loop") enddef s("start")
 
         run()
     }
