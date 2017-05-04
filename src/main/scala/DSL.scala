@@ -216,10 +216,6 @@ object ForthDSL {
         this.optype = "end"
     }
 
-    object lol extends general_op {
-        this.optype = "lol"
-    }
-
     object lastkey extends general_op {
         this.optype = "lastkey"
     }
@@ -257,7 +253,7 @@ object ForthDSL {
     }
 
     def run() {
-        (new ForthInterpreter(prog.toList.filter(x => (x != "" && x != "s" && x != "lol")))).execute()
+        (new ForthInterpreter(prog.toList.filter(x => (x != "" && x != "s")))).execute()
     }
 
     implicit class symbolconv(s:Symbol) {
@@ -267,6 +263,7 @@ object ForthDSL {
     }
 
     def main(args: Array[String]): Unit = {
+
             defn s("convert-x-y") num(24) s("cells") mul add enddef
             defn s("draw") s("convert-x-y") s("graphics") add vwrite enddef
             defn s("draw-white") num(1) rot rot s("draw") enddef

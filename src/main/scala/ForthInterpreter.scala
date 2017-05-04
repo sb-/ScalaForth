@@ -218,7 +218,6 @@ class ForthInterpreter(prog: List[String]) {
                 return function_end + 1
             }
             case "end" => {}
-            case "lol" => {}
             case "emitstr" => {
                 print(program(pc + 1))
                 return pc + 2
